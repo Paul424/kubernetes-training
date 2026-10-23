@@ -25,6 +25,8 @@ This repository holds a baseline Kubernetes environment which we can use to get 
 
 We use a VM from [CloudNL / VMware](./providers/vmware/README.md) as the development environment, please see the README for a guideline how to configure and operate.
 
+Then continue on your VM with this guide.
+
 ## Prerequisites
 
 Following tools are required, install all of these. When possible just pick a prebuild binary and move it into the `/usr/local/bin` which is often easier than to use yet another package manager.
@@ -60,8 +62,14 @@ sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-a
     wget https://github.com/getsops/sops/releases/download/v3.13.3/sops-v3.13.3.linux.amd64
     sudo install sops-v3.13.3.linux.amd64 /usr/local/bin/sops && rm sops-v3.13.3.linux.amd64
     ```
-6. 
+6. [git](./docs/GIT.md)
+7. [VSCode](https://code.visualstudio.com/thank-you?dv=linux64_deb&build=stable)
 
+    For instance
+    ```
+    # Download .deb using the link and then:
+    sudo dpkg -i ~/Downloads/code_1.143.1-172....deb
+    ```
 
 ## Kubernetes Provider
 
@@ -70,5 +78,14 @@ We like to have a working Kubernetes cluster /w .kube/config as quickly and simp
 The benefit of using something like minikube is that you can make development cycles very quickly and any insight material you want to inspect runs locally.
 
 See [minikube guideline](./providers/minikube/README.md) how to spin new clusters.
+
+## Test Kube API
+
+Confirm you have a working Kubernetes cluster by running following commands
+
+```
+kubectl config get-contexts
+
+```
 
 ## Bootstrap
