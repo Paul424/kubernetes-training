@@ -169,5 +169,35 @@ bash ./scripts/bootstrap.sh
 
 ## Monitor
 
+After a few minutes services should be up and running. Check the status of following relevant resources:
+
+```
+# 1. The GitRepository from which desired state is read
+kubectl get gitrepositories -A
+NAMESPACE   NAME                  URL                                                  AGE    READY   STATUS
+env         kubernetes-training   https://github.com/Paul424/kubernetes-training.git   150m   True    stored artifact for revision 'main@sha1:3a5f6d330c5e52d5a073dcc2a67bc7ef428bcf04'
+
+# 2. The state of (top level) environment Kustomizations
+kubectl get kustomization -A
+NAMESPACE   NAME                AGE    READY   STATUS
+env         env-observability   151m   True    Applied revision: main@sha1:3a5f6d330c5e52d5a073dcc2a67bc7ef428bcf04
+env         env-security        151m   True    Applied revision: main@sha1:3a5f6d330c5e52d5a073dcc2a67bc7ef428bcf04
+
+# 3. State of lower level HelmReleases
+
+```
+
+## Control
+
+From the commandline you are control gitops operations:
+
+```
+# Fetch latest updates from the (git) upstream + trigger a reconcile for the observability environment.
+flux reconcile kustomization -n env env-observability --with-source
+
+# 
+
+```
+
 ## Access
 

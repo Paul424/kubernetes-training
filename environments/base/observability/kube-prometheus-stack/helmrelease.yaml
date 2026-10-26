@@ -11,7 +11,7 @@ spec:
       chart: ./charts/kube-prometheus-stack-85.0.1.tgz
       sourceRef:
         kind: GitRepository
-        name: bq26-infrastructure
+        name: kubernetes-training
         namespace: env
   test:
     enable: false
