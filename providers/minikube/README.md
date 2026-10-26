@@ -1,26 +1,5 @@
 # Minikube
 
-Minikube was added as a provider to work with local gpu's (the gpu support in kind is very limited)
-
-## Prerequisites
-
-1. [minikube](https://minikube.sigs.k8s.io/docs/start/)
-2. 
-
-## Configure
-
-See also [gpu support minikube](https://minikube.sigs.k8s.io/docs/tutorials/nvidia/)
-
-1. Download drivers for the hw (e.g. NVIDIA RTX 3500 Ada) [Nvidia drivers](https://www.nvidia.com/en-us/drivers/)
-2. Install [NVIDIA container toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
-3. Configure docker
-
-```
-nvidia-ctk runtime configure --runtime=docker --set-as-default
->>> INFO[0000] Wrote updated config to /etc/docker/daemon.json
-systemctl restart docker
-```
-
 ## Setup
 
 ```

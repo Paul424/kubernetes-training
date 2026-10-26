@@ -88,4 +88,23 @@ kubectl config get-contexts
 
 ```
 
+## Sops setup (one time only)
+
+Secrets on the Kubernetes cluster are encrypted using sops; for this we need to setup a gpg key (once) which is then shared with the whole team.
+
+To setup (once) see [sops setup guide](./docs/SOPS.md)
+
+To import an existing (used) gpg key see [sops how to import gpg key](./docs/SOPS.md#Import-an-existing-gpg-key)
+
+## Provide confs (credentials)
+
+```
+export REGISTRY_UPSTREAM_USERNAME=<your-github-account>
+export REGISTRY_UPSTREAM_PAT=<your-pat-like-github_pat_1234567890>
+```
+
 ## Bootstrap
+
+```
+bash ./scripts/bootstrap.sh
+```
