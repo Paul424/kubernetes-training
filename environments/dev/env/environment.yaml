@@ -26,7 +26,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: kubernetes-training
-  path: ./manifests/overlays/security/
+  path: ./environments/dev/security/
   prune: true
   decryption:
     provider: sops
@@ -43,7 +43,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: kubernetes-training
-  path: ./manifests/overlays/observability/
+  path: ./environments/dev/observability/
   prune: true
   dependsOn:
     - name: env-security
