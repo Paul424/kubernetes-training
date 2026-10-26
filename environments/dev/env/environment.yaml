@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: env
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: kubernetes-training
+  namespace: env
+spec:
+  interval: 1m
+  url: https://github.com/Paul424/kubernetes-training.git
+  ref:
+    branch: main
+  secretRef:
+    name: private-git
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: env-security
+  namespace: env
+spec:
+  interval: 1m
+  sourceRef:
+    kind: GitRepository
+    name: kubernetes-training
+  path: ./manifests/overlays/security/
+  prune: true
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-gpg
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: env-observability
+  namespace: env
+spec:
+  interval: 1m
+  sourceRef:
+    kind: GitRepository
+    name: kubernetes-training
+  path: ./manifests/overlays/observability/
+  prune: true
+  dependsOn:
+    - name: env-security
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-gpg
