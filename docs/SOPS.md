@@ -57,7 +57,7 @@ gpg:   secret keys imported: 1
 ### Apply the key to the cluster
 
 ```
-gpg --export-secret-key --armor "dev.local" | kubectl create secret generic sops-gpg -n dev --from-file=key.asc=/dev/stdin --dry-run=client -o yaml | kubectl apply -f -
+gpg --export-secret-key --armor "dev.local" | kubectl create secret generic sops-gpg -n env --from-file=key.asc=/dev/stdin --dry-run=client -o yaml | kubectl apply -f -
 ```
 
 ## SOPS Wow
