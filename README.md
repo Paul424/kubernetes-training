@@ -18,8 +18,8 @@ This repository holds a baseline Kubernetes environment which we can use to get 
 
 ### Topics excluded
 
-1. wsl; even though we can spin a similar setup on our (Windows based) office equipment using wsl it is left out intentionally because it adds complexity, for instance to fine tune wsl setup to enable container platform and wsl is headless meaning you need to tunnel your apps to the browser running on Windows.
-2. Tunneling; yes we can expose apps using a tunnel (and have foxy proxy plugin access apps over a SOCKS5 tunnel), but it only makes it complicated, not just the tunnel setup but also doing DNS workarounds on an additional level.
+1. Tunneling; yes we can work with headless VM's and expose apps using a tunnel (and use foxy proxy to access apps over a SOCKS5 tunnel), but it only makes it more complicated, not just the tunnel setup but also doing DNS workarounds on an additional level.
+2. Wsl; even though we can spin a similar setup on our (Windows based) office equipment using wsl it is left out intentionally because it adds complexity, for instance to fine tune wsl setup to enable container platform and wsl is headless meaning you need to tunnel your apps to the browser running on Windows.
 
 ## Development Environment Provider
 
