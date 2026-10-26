@@ -1,0 +1,35 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: kube-prometheus-stack-selfsigned-issuer
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: grafana-tls-cert
+spec:
+  secretName: grafana-tls
+  duration: 2160h # 90d
+  renewBefore: 720h # 30d
+  dnsNames:
+  - grafana.dev.local
+  issuerRef:
+    name: kube-prometheus-stack-selfsigned-issuer
+    kind: Issuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: prometheus-tls-cert
+spec:
+  secretName: prometheus-tls
+  duration: 2160h # 90d
+  renewBefore: 720h # 30d
+  dnsNames:
+  - prometheus.dev.local
+  issuerRef:
+    name: kube-prometheus-stack-selfsigned-issuer
+    kind: Issuer

@@ -1,0 +1,38 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kube-prometheus-stack
+spec:
+  targetNamespace: monitoring
+  releaseName: kube-prometheus-stack
+  interval: 10m
+  chart:
+    spec:
+      chart: ./charts/kube-prometheus-stack-85.0.1.tgz
+      sourceRef:
+        kind: GitRepository
+        name: bq26-infrastructure
+        namespace: env
+  test:
+    enable: false
+  install:
+    createNamespace: false
+    remediation:
+      retries: -1
+  upgrade:
+    remediation:
+      retries: 5
+      remediateLastFailure: true
+    cleanupOnFail: true
+  rollback:
+    timeout: 10m
+    cleanupOnFail: false
+  valuesFrom:
+    - kind: Secret
+      name: common-kube-prometheus-stack-secret
+    - kind: ConfigMap
+      name: common-kube-prometheus-stack
+    - kind: Secret
+      name: values-kube-prometheus-stack-secret
+    - kind: ConfigMap
+      name: values-kube-prometheus-stack

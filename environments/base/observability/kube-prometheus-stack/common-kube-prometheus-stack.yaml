@@ -1,0 +1,84 @@
+defaultRules:
+  create: true
+
+alertmanager:
+  enabled: true
+
+grafana:
+  enabled: true
+
+  # Administrator credentials are configured in the sops encrypted conf
+
+  # adminUser: admin
+  # adminPassword: strongpassword
+
+  # Use an existing secret for the admin user.
+  # admin:
+  #   ## Name of the secret. Can be templated.
+  #   existingSecret: ""
+  #   userKey: admin-user
+  #   passwordKey: admin-password
+
+kubernetesServiceMonitors:
+  enabled: true
+
+kubeApiServer:
+  enabled: true
+
+kubelet:
+  enabled: true
+
+kubeControllerManager:
+  enabled: true
+
+coreDns:
+  enabled: true
+
+kubeDns:
+  enabled: false
+
+kubeEtcd:
+  enabled: true
+
+kubeScheduler:
+  enabled: true
+
+kubeProxy:
+  enabled: true
+
+kubeStateMetrics:
+  enabled: true
+
+nodeExporter:
+  enabled: true
+
+prometheusOperator:
+  enabled: true
+
+prometheus:
+  enabled: true
+
+  prometheusSpec:
+
+    ruleNamespaceSelector: {}
+    ruleSelectorNilUsesHelmValues: true
+    ruleSelector: {}
+
+    serviceMonitorSelectorNilUsesHelmValues: true
+    serviceMonitorSelector: {}
+    serviceMonitorNamespaceSelector: {}
+
+    podMonitorSelectorNilUsesHelmValues: true
+    podMonitorSelector: {}
+    podMonitorNamespaceSelector: {}
+
+    probeSelectorNilUsesHelmValues: true
+    probeSelector: {}
+    probeNamespaceSelector: {}
+
+    scrapeConfigSelectorNilUsesHelmValues: true
+    scrapeConfigSelector: {}
+    scrapeConfigNamespaceSelector: {}
+
+thanosRuler:
+  enabled: false

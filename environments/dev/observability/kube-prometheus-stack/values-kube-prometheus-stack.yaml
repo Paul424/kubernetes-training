@@ -1,0 +1,22 @@
+grafana:
+  ingress:
+    enabled: true
+    hosts:
+      - grafana.dev.local
+    path: /
+    tls:
+      - secretName: grafana-tls
+        hosts:
+        - grafana.dev.local
+
+prometheus:
+  ingress:
+    enabled: true
+    hosts:
+      - prometheus.dev.local
+    paths:
+      - /
+    tls:
+      - secretName: prometheus-tls
+        hosts:
+          - prometheus.dev.local
