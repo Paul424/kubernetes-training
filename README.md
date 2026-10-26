@@ -166,3 +166,8 @@ export REGISTRY_UPSTREAM_PAT=<your-pat-like-github_pat_1234567890>
 ```
 bash ./scripts/bootstrap.sh
 ```
+
+## Monitor
+
+## Access
+
