@@ -6,5 +6,7 @@ configurations:
 
 resources:
 - ../../base/gitops/flux
+- metallb.yaml
+- storageclass.yaml
 
 images: []
