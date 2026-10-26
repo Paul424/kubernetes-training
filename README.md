@@ -184,6 +184,10 @@ env         env-observability   151m   True    Applied revision: main@sha1:3a5f6
 env         env-security        151m   True    Applied revision: main@sha1:3a5f6d330c5e52d5a073dcc2a67bc7ef428bcf04
 
 # 3. State of lower level HelmReleases
+kubectl get helmrelease -A
+NAMESPACE    NAME                    AGE   READY   STATUS
+monitoring   kube-prometheus-stack   10m   True    Helm install succeeded for release monitoring/kube-prometheus-stack.v1 with chart kube-prometheus-stack@85.0.1
+
 
 ```
 
@@ -195,7 +199,10 @@ From the commandline you are control gitops operations:
 # Fetch latest updates from the (git) upstream + trigger a reconcile for the observability environment.
 flux reconcile kustomization -n env env-observability --with-source
 
-# 
+# Suspend / Resume reconcilers
+flux suspend helmrelease -n monitoring kube-prometheus-stack
+flux resume helmrelease -n monitoring kube-prometheus-stack
+
 
 ```
 
