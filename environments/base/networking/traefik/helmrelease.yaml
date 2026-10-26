@@ -1,0 +1,38 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: traefik
+spec:
+  targetNamespace: monitoring
+  releaseName: traefik
+  interval: 3m
+  chart:
+    spec:
+      chart: ./charts/traefik-42.1.3.tgz
+      sourceRef:
+        kind: GitRepository
+        name: kubernetes-training
+        namespace: env
+  test:
+    enable: false
+  install:
+    createNamespace: false
+    remediation:
+      retries: -1
+  upgrade:
+    remediation:
+      retries: 5
+      remediateLastFailure: true
+    cleanupOnFail: true
+  rollback:
+    timeout: 10m
+    cleanupOnFail: false
+  valuesFrom:
+    - kind: Secret
+      name: common-traefik-secret
+    - kind: ConfigMap
+      name: common-traefik
+    - kind: Secret
+      name: values-traefik-secret
+    - kind: ConfigMap
+      name: values-traefik

@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+configurations:
+- namerefs.yaml
+
+resources:
+- namespace.yaml
+- secrets
+- helmrelease.yaml
+
+configMapGenerator:
+- behavior: create
+  files:
+  - values.yaml=common-traefik.yaml
+  name: common-traefik
+
+transformers:
+- |-
+  apiVersion: builtin
+  kind: NamespaceTransformer
+  metadata:
+    name: not-relevant-here
+    namespace: traefik
+  unsetOnly: true

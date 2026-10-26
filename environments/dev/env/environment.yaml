@@ -36,6 +36,25 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
+  name: env-networking
+  namespace: env
+spec:
+  interval: 1m
+  sourceRef:
+    kind: GitRepository
+    name: kubernetes-training
+  path: ./environments/dev/networking/
+  prune: true
+  dependsOn:
+    - name: env-security
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-gpg
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
   name: env-observability
   namespace: env
 spec:
@@ -47,6 +66,7 @@ spec:
   prune: true
   dependsOn:
     - name: env-security
+    - name: env-networking
   decryption:
     provider: sops
     secretRef:
