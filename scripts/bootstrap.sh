@@ -22,10 +22,10 @@ kubectl create secret generic private-git -n dev \
 kubectl apply -k $BASE/environments/dev/gitops
 
 # Wait for the controllers
-kubectl wait --for=condition=available --timeout "300s" -n flux-system "deployment/helm-controller"
-kubectl wait --for=condition=available --timeout "300s" -n flux-system "deployment/kustomize-controller"
-kubectl wait --for=condition=available --timeout "300s" -n flux-system "deployment/notification-controller"
-kubectl wait --for=condition=available --timeout "300s" -n flux-system "deployment/source-controller"
+kubectl wait --for=condition=available --timeout "300s" -n flux "deployment/helm-controller"
+kubectl wait --for=condition=available --timeout "300s" -n flux "deployment/kustomize-controller"
+kubectl wait --for=condition=available --timeout "300s" -n flux "deployment/notification-controller"
+kubectl wait --for=condition=available --timeout "300s" -n flux "deployment/source-controller"
 
 # The top level reconciler
 kubectl apply -k $BASE/environments/dev/env

@@ -45,7 +45,13 @@ For convenience the key is [committed to this repository](../asc/dev-local.asc),
 
 Import the gpg key
 ```
-gpg --import dev-local.asc
+$ gpg --import ./asc/dev-local.asc
+gpg: key E7AC9BE0D2C9F43F: public key ""dev.local" ("flux secrets")" imported
+gpg: key E7AC9BE0D2C9F43F: secret key imported
+gpg: Total number processed: 1
+gpg:               imported: 1
+gpg:       secret keys read: 1
+gpg:   secret keys imported: 1
 ```
 
 ### Apply the key to the cluster

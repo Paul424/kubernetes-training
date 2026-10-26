@@ -6,8 +6,8 @@ minikube start \
     --nodes=1 \
     --driver=docker \
     --container-runtime=docker \
-    --cpus=8 \
-    --memory=16384 \
+    --cpus=4 \
+    --memory=12384 \
     --cni=calico \
     --subnet=192.168.49.0/24
 

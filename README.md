@@ -46,7 +46,7 @@ Following tools are required, install all of these. When possible just pick a pr
     For instance:
     ```
     curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
-sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
+    sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
     ```
 4. [flux](https://fluxcd.io/flux/installation/)
 
@@ -70,6 +70,12 @@ sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-a
     # Download .deb using the link and then:
     sudo dpkg -i ~/Downloads/code_1.143.1-172....deb
     ```
+8. [k9s](https://github.com/derailed/k9s/releases)
+
+    For instance
+    ```
+    curl -fsSL https://github.com/derailed/k9s/releases/download/v0.51.0/k9s_Linux_amd64.tar.gz | sudo tar -xz -C /usr/local/bin k9s
+    ```
 
 ## Kubernetes Provider
 
@@ -84,8 +90,60 @@ See [minikube guideline](./providers/minikube/README.md) how to spin new cluster
 Confirm you have a working Kubernetes cluster by running following commands
 
 ```
-kubectl config get-contexts
+$ kubectl config get-contexts
 
+CURRENT   NAME       CLUSTER    AUTHINFO   NAMESPACE
+*         minikube   minikube   minikube   default
+
+$ kubectl get nodes 
+NAME       STATUS   ROLES           AGE     VERSION
+minikube   Ready    control-plane   6m46s   v1.37.0
+
+$ kubectl describe nodes minikube
+Name:               minikube
+Roles:              control-plane
+Labels:             beta.kubernetes.io/arch=amd64
+                    beta.kubernetes.io/os=linux
+                    <...>
+Annotations:        csi.volume.kubernetes.io/nodeid: {"hostpath.csi.k8s.io":"minikube"}
+                    node.alpha.kubernetes.io/ttl: 0
+                    <...>
+Addresses:
+  InternalIP:  192.168.49.2
+  Hostname:    minikube
+Capacity:
+  cpu:                4
+  ephemeral-storage:  67818168320
+  hugepages-2Mi:      0
+  memory:             16372620Ki
+  pods:               110
+Allocatable:
+  cpu:                4
+  ephemeral-storage:  67818168320
+  hugepages-2Mi:      0
+  memory:             16372620Ki
+  pods:               110
+System Info:
+  Machine ID:                 b7566eefbea02b7ce85821e86a97158b
+  System UUID:                ce0011db-21c5-4fa8-b062-22555d58ca0a
+  Boot ID:                    8d5eb2df-b44f-41b2-9a8f-9767f5c6e6fd
+  Kernel Version:             7.0.0-38-generic
+  OS Image:                   Debian GNU/Linux 12 (bookworm)
+  Operating System:           linux
+  Architecture:               amd64
+  Container Runtime Version:  docker://29.7.2
+  Kubelet Version:            v1.37.0
+PodCIDR:                      10.244.0.0/24
+PodCIDRs:                     10.244.0.0/24
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  Resource           Requests     Limits
+  --------           --------     ------
+  cpu                1200m (30%)  200m (5%)
+  memory             370Mi (2%)   370Mi (2%)
+  ephemeral-storage  0 (0%)       0 (0%)
+  hugepages-2Mi      0 (0%)       0 (0%)
+Events:
 ```
 
 ## Sops setup (one time only)
