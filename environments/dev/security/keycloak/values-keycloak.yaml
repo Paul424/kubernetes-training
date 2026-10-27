@@ -1,0 +1,13 @@
+production: false
+httpEnabled: true
+proxyHeaders: xforwarded
+hostnameStrict: true
+
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  hostname: keycloak.dev.local
+  tls: true
+  selfSigned: false
+  annotations:
+    cert-manager.io/cluster-issuer: keycloak-ca-issuer
