@@ -17,9 +17,11 @@ spec:
     enable: false
   install:
     createNamespace: false
+    timeout: 10m
     remediation:
       retries: -1
   upgrade:
+    timeout: 10m
     remediation:
       retries: 5
       remediateLastFailure: true
