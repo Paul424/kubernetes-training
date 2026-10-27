@@ -76,6 +76,13 @@ Following tools are required, install all of these. When possible just pick a pr
     ```
     curl -fsSL https://github.com/derailed/k9s/releases/download/v0.51.0/k9s_Linux_amd64.tar.gz | sudo tar -xz -C /usr/local/bin k9s
     ```
+9. [yq](https://github.com/mikefarah/yq/releases/tag/v4.54.1)
+
+    For instance:
+    ```
+    curl -fsSL https://github.com/mikefarah/yq/releases/download/v4.54.1/yq_linux_amd64.tar.gz | sudo tar -xzvf - -C /usr/local/bin --transform='s/yq_linux_amd64/yq/' ./yq_linux_amd64
+    ```
+
 
 ## Kubernetes Provider
 
