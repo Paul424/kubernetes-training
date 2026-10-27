@@ -208,13 +208,12 @@ flux resume helmrelease -n monitoring kube-prometheus-stack
 
 ## Access
 
-Find the IP's on which the LB is exposing:
+Find the (external) IP on which the LB is exposing:
 
 ```
-
-
-NAMESPACE      NAME                      TYPE           CLUSTER-IP       EXTERNAL-IP      PORT(S)                      AGE
-traefik        traefik                   LoadBalancer   10.107.243.218   192.168.49.100   80:30811/TCP,443:31837/TCP   20m
+kubectl get svc -n traefik
+NAME      TYPE           CLUSTER-IP       EXTERNAL-IP      PORT(S)                      AGE
+traefik   LoadBalancer   10.101.191.208   192.168.49.100   80:30617/TCP,443:32008/TCP   49s
 ```
 
 Add the hostnames to your /etc/hosts as fake DNS service
@@ -223,6 +222,7 @@ Add the hostnames to your /etc/hosts as fake DNS service
 192.168.49.100 traefik.dev.local
 192.168.49.100 grafana.dev.local
 192.168.49.100 prometheus.dev.local
+192.168.49.100 alertmanager.dev.local
 ```
 
 ### Endpoints and credentials
@@ -230,3 +230,4 @@ Add the hostnames to your /etc/hosts as fake DNS service
 1. [traefik dashboard](https://traefik.dev.local/dashboard/). Credentials: traefik / traefik
 2. [Grafana](https://grafana.dev.local/). Credentials: user / password
 3. [Prometheus](https://prometheus.dev.local/). Credentials: user / password
+4. [AlertManager](https://alertmanager.dev.local/).

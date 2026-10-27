@@ -20,3 +20,15 @@ prometheus:
       - secretName: prometheus-tls
         hosts:
           - prometheus.dev.local
+
+alertmanager:
+  ingress:
+    enabled: true
+    hosts:
+      - alertmanager.dev.local
+    paths:
+      - /
+    tls:
+      - secretName: alertmanager-tls
+        hosts:
+          - alertmanager.dev.local
