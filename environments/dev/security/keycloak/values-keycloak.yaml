@@ -13,6 +13,7 @@ ingress:
     cert-manager.io/issuer: keycloak-ca-issuer
 
 global:
+  defaultStorageClass: csi-hostpath-sc
   security:
     allowInsecureImages: true
 
