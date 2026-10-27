@@ -10,4 +10,4 @@ ingress:
   tls: true
   selfSigned: false
   annotations:
-    cert-manager.io/cluster-issuer: keycloak-ca-issuer
+    cert-manager.io/issuer: keycloak-ca-issuer

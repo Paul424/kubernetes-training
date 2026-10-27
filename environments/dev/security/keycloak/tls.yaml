@@ -3,6 +3,7 @@ apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: keycloak-selfsigned-issuer
+  namespace: keycloak
 spec:
   selfSigned: {}
 ---
@@ -10,7 +11,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: keycloak-ca
-  namespace: cert-manager
+  namespace: keycloak
 spec:
   isCA: true
   commonName: keycloak-ca
@@ -26,6 +27,7 @@ apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: keycloak-ca-issuer
+  namespace: keycloak
 spec:
   ca:
     secretName: keycloak-ca-secret
