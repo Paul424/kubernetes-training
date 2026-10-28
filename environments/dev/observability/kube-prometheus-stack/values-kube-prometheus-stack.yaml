@@ -33,7 +33,7 @@ grafana:
     mountPath: /etc/secrets/auth_generic_oauth
     name: auth-generic-oauth-secret
     readOnly: true
-    secretName: grafana-sso
+    secretName: grafana-sso-secret
 
 prometheus:
   ingress:
