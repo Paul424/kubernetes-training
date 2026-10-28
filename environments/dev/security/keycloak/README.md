@@ -7,7 +7,7 @@ From upstream:
 ## Update the realm
 
 ```
-kubectl create secret generic keycloak-realm --from-literal=realm.json="$(yq -o=json ./environments/dev/security/keycloak/secrets/realm.yaml)" --dry-run=client -o yaml > ./environments/dev/security/keycloak/secrets/keycloak-realm-secret.yaml
+kubectl create secret generic keycloak-realm --from-file=realm.json=./environments/dev/security/keycloak/secrets/realm.json --dry-run=client -o yaml > ./environments/dev/security/keycloak/secrets/keycloak-realm-secret.yaml
 ```
 
 ## Export the users
