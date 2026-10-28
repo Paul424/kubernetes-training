@@ -6,6 +6,7 @@ From upstream:
 
 ## Update the realm
 
+When updating the realm (json), run the following command to wrap it in a secret.
 ```
 kubectl create secret generic keycloak-realm --from-file=realm.json=./environments/dev/security/keycloak/secrets/realm.json --dry-run=client -o yaml > ./environments/dev/security/keycloak/secrets/keycloak-realm-secret.yaml
 ```
@@ -18,7 +19,7 @@ KC_DB_USERNAME=bn_keycloak \
 KC_DB_PASSWORD="$(cat /opt/bitnami/keycloak/secrets/db-password)" \
 /opt/bitnami/keycloak/bin/kc.sh export \
   --dir /tmp/export \
-  --realm me-yoda \
+  --realm master \
   --users different_files \
   --bootstrap-admin-username admin \
   --bootstrap-admin-password admin \
