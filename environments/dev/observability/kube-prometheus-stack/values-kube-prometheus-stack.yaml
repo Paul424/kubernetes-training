@@ -12,15 +12,15 @@ grafana:
   grafana.ini:
     auth.generic_oauth:
       allow_sign_up: true
-      api_url: https://keycloak.dev.local/auth/realms/me-yoda/protocol/openid-connect/userinfo
-      auth_url: https://keycloak.dev.local/auth/realms/me-yoda/protocol/openid-connect/auth
+      api_url: https://keycloak.dev.local/realms/me-yoda/protocol/openid-connect/userinfo
+      auth_url: https://keycloak.dev.local/realms/me-yoda/protocol/openid-connect/auth
       client_id: $__file{/etc/secrets/auth_generic_oauth/client_id}
       client_secret: $__file{/etc/secrets/auth_generic_oauth/client_secret}
       enabled: true
       name: keycloak
       role_attribute_path: Viewer
       scopes: openid grafana
-      token_url: https://keycloak.dev.local/auth/realms/me-yoda/protocol/openid-connect/token
+      token_url: https://keycloak.dev.local/realms/me-yoda/protocol/openid-connect/token
       allow_assign_grafana_admin: true
       org_attribute_path: teams[?starts_with(@, '/teams')]
       org_mapping: /teams/team-ops:Ops /teams/team-sustaining:Sustaining /teams/team-yellow:Yellow
