@@ -2,12 +2,11 @@
 set -euxo pipefail
 
 BASE=$(dirname $(dirname $(realpath $0)))
-CLUSTER_NAME=${1:-bb9};
 
 SOPS_KEY_NAME="dev.local"
 
 # Create the namespace for initial secrets
-kubectl create namespace dev --dry-run=client -o yaml | kubectl apply -f -
+kubectl create namespace env --dry-run=client -o yaml | kubectl apply -f -
 
 # Export the SOPS key to the cluster
 gpg --export-secret-key --armor "${SOPS_KEY_NAME}" | kubectl create secret generic sops-gpg -n env --from-file=key.asc=/dev/stdin --dry-run=client -o yaml | kubectl apply -f -
