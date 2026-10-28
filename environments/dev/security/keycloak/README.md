@@ -9,3 +9,21 @@ From upstream:
 ```
 kubectl create secret generic keycloak-realm --from-literal=realm.json="$(yq -o=json ./environments/dev/security/keycloak/secrets/realm.yaml)" --dry-run=client -o yaml > ./environments/dev/security/keycloak/secrets/keycloak-realm-secret.yaml
 ```
+
+## Export the users
+
+```
+KC_DB=postgres \
+KC_DB_USERNAME=bn_keycloak \
+KC_DB_PASSWORD="$(cat /opt/bitnami/keycloak/secrets/db-password)" \
+/opt/bitnami/keycloak/bin/kc.sh export \
+  --dir /tmp/export \
+  --realm me-yoda \
+  --users different_files \
+  --bootstrap-admin-username admin \
+  --bootstrap-admin-password admin \
+  --optimized
+
+I have no name!@keycloak-0:/$ KC_DB=postgres /opt/bitnami/keycloak/bin/kc.sh export --dir /tmp/export --realm me-yoda --users different_files --bootstrap-admin-username admin --bootstrap-admin-password admin
+
+```

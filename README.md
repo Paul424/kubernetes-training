@@ -230,6 +230,7 @@ Add the hostnames to your /etc/hosts as fake DNS service
 192.168.49.100 grafana.dev.local
 192.168.49.100 prometheus.dev.local
 192.168.49.100 alertmanager.dev.local
+192.168.49.100 keycloak.dev.local
 ```
 
 ### Endpoints and credentials
