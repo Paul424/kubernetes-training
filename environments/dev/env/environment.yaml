@@ -12,7 +12,7 @@ spec:
   interval: 1m
   url: https://github.com/Paul424/kubernetes-training.git
   ref:
-    branch: authentication
+    branch: main
   secretRef:
     name: private-git
 ---
