@@ -1,0 +1,42 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: oidc-platform-administrators
+subjects:
+- kind: Group
+  name: platform-administrators  # The role name from Keycloak (tied to a user through groups); check in Client Scopes / Evaluate which groups a User belongs to
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: oidc-networking-developers
+subjects:
+- kind: Group
+  name: networking-developers  # The role name from Keycloak (tied to a user through groups); check in Client Scopes / Evaluate which groups a User belongs to
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: view  # Only as an example
+  apiGroup: rbac.authorization.k8s.io
+
+# Or define bindings namespaced
+# ---
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: RoleBinding
+# metadata:
+#   name: oidc-team-a-edit
+#   namespace: team-a
+# subjects:
+# - kind: Group
+#   name: team-a
+#   apiGroup: rbac.authorization.k8s.io
+# roleRef:
+#   kind: ClusterRole
+#   name: edit
+#   apiGroup: rbac.authorization.k8s.io

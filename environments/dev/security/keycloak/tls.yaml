@@ -1,27 +1,27 @@
----
-apiVersion: cert-manager.io/v1
-kind: Issuer
-metadata:
-  name: keycloak-selfsigned-issuer
-  namespace: keycloak
-spec:
-  selfSigned: {}
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: keycloak-ca
-  namespace: keycloak
-spec:
-  isCA: true
-  commonName: keycloak-ca
-  secretName: keycloak-ca-secret
-  privateKey:
-    algorithm: ECDSA
-    size: 256
-  issuerRef:
-    name: keycloak-selfsigned-issuer
-    kind: Issuer
+# ---
+# apiVersion: cert-manager.io/v1
+# kind: Issuer
+# metadata:
+#   name: keycloak-selfsigned-issuer
+#   namespace: keycloak
+# spec:
+#   selfSigned: {}
+# ---
+# apiVersion: cert-manager.io/v1
+# kind: Certificate
+# metadata:
+#   name: keycloak-ca
+#   namespace: keycloak
+# spec:
+#   isCA: true
+#   commonName: keycloak-ca
+#   secretName: keycloak-ca-secret
+#   privateKey:
+#     algorithm: ECDSA
+#     size: 256
+#   issuerRef:
+#     name: keycloak-selfsigned-issuer
+#     kind: Issuer
 ---
 apiVersion: cert-manager.io/v1
 kind: Issuer

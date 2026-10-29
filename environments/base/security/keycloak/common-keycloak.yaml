@@ -1,0 +1,6 @@
+# Prevent Kubernetes to restart the pod while initializing the realm
+startupProbe:
+  enabled: true
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  failureThreshold: 30

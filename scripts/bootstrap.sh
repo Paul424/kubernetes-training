@@ -17,6 +17,10 @@ kubectl create secret generic private-git -n env \
     --from-literal=password=$REGISTRY_UPSTREAM_PAT \
     --dry-run=client -o yaml | kubectl apply -f -
 
+# Push the keycloak-ca to the cluster (so cert-manager can generate leaf crts upon request by ingress resource annotations)
+kubectl create namespace keycloak --dry-run=client -o yaml | kubectl apply -f -
+kubectl -n keycloak create secret tls keycloak-ca-secret --cert=$BASE/ca/keycloak-ca.crt --key=$BASE/ca/keycloak-ca.key --dry-run=client -o yaml | kubectl apply -f -
+
 # Deploy flux
 kubectl apply -k $BASE/environments/dev/gitops
 
