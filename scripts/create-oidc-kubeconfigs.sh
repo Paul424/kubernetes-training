@@ -45,7 +45,26 @@ function up_kc_config {
     kubectl config set-context $USERNAME --cluster=$CLUSTER_NAME --user=$USERNAME
 }
 
-up_kc_config fred minikube
-up_kc_config wilma minikube
-up_kc_config barney minikube
-up_kc_config betty minikube
+function oidc_login_config {
+    local USERNAME=${1};
+    local CLUSTER_NAME=${2};
+    local CLIENT_ID=kubernetes
+    local ISSUER=https://keycloak.dev.local/realms/me-yoda
+    kubectl config set-credentials $USERNAME \
+        --exec-api-version=client.authentication.k8s.io/v1 \
+        --exec-interactive-mode=IfAvailable \
+        --exec-command=kubectl \
+        --exec-arg=oidc-login \
+        --exec-arg=get-token \
+        --exec-arg=--oidc-issuer-url=$ISSUER \
+        --exec-arg=--oidc-client-id=$CLIENT_ID \
+        --exec-arg=--certificate-authority=$BASE/ca/keycloak-ca.crt 
+    kubectl config set-context $USERNAME --cluster=$CLUSTER_NAME --user=$USERNAME
+}
+
+# up_kc_config fred minikube
+# up_kc_config wilma minikube
+# up_kc_config barney minikube
+# up_kc_config betty minikube
+
+oidc_login_config oidc-user minikube

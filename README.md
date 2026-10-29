@@ -41,42 +41,52 @@ Following tools are required, install all of these. When possible just pick a pr
     sudo mv ./kubectl /usr/local/bin/
     ```
 
-3. [minikube](https://minikube.sigs.k8s.io/docs/start/?arch=%2Flinux%2Fx86-64%2Fstable%2Fbinary+download)
+3. [kubelogin plugin](https://github.com/int128/kubelogin/releases)
+
+    For instance:
+    ```
+    curl -L https://github.com/int128/kubelogin/releases/download/v1.36.4/kubelogin_linux_amd64.zip -o kubelogin.zip && \
+      unzip -p kubelogin.zip kubelogin > kubectl-oidc_login && \
+      sudo install kubectl-oidc_login /usr/local/bin/ && \
+      rm kubelogin kubelogin.zip
+    ```
+
+4. [minikube](https://minikube.sigs.k8s.io/docs/start/?arch=%2Flinux%2Fx86-64%2Fstable%2Fbinary+download)
     
     For instance:
     ```
     curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
     sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
     ```
-4. [flux](https://fluxcd.io/flux/installation/)
+5. [flux](https://fluxcd.io/flux/installation/)
 
     For instance
     ```
     curl -s https://fluxcd.io/install.sh | sudo bash
     ```
 
-5. [sops](https://getsops.io/docs/installation/)
+6. [sops](https://getsops.io/docs/installation/)
 
     For instance
     ```
     wget https://github.com/getsops/sops/releases/download/v3.13.3/sops-v3.13.3.linux.amd64
     sudo install sops-v3.13.3.linux.amd64 /usr/local/bin/sops && rm sops-v3.13.3.linux.amd64
     ```
-6. [git](./docs/GIT.md)
-7. [VSCode](https://code.visualstudio.com/thank-you?dv=linux64_deb&build=stable)
+7. [git](./docs/GIT.md)
+8. [VSCode](https://code.visualstudio.com/thank-you?dv=linux64_deb&build=stable)
 
     For instance
     ```
     # Download .deb using the link and then:
     sudo dpkg -i ~/Downloads/code_1.143.1-172....deb
     ```
-8. [k9s](https://github.com/derailed/k9s/releases)
+9. [k9s](https://github.com/derailed/k9s/releases)
 
     For instance
     ```
     curl -fsSL https://github.com/derailed/k9s/releases/download/v0.51.0/k9s_Linux_amd64.tar.gz | sudo tar -xz -C /usr/local/bin k9s
     ```
-9. [yq](https://github.com/mikefarah/yq/releases/tag/v4.54.1)
+10. [yq](https://github.com/mikefarah/yq/releases/tag/v4.54.1)
 
     For instance:
     ```
@@ -247,8 +257,43 @@ Bootstrapping is done using the default (admin) user, however part of the bootst
 | barney | barney | junior, team-sustaining, application operators | *app*-developers |
 | betty | betty | senior, team-ops, network-engineer, kubernetes-engineer | platform-administrators |
 
-To operate as-a-user simply switch to the predefined context for the user.
+To operate as-a-user simply switch to the predefined (oidc-user) context and authenticate to keycloak.
 
 ```
+kubectl get nodes --context oidc-user
 
+<login to keycloak as user fred>
+
+NAME       STATUS   ROLES           AGE   VERSION
+minikube   Ready    control-plane   99m   v1.37.0
+
+kubectl auth whoami --context oidc-user
+ATTRIBUTE                                           VALUE
+Username                                            fred
+Groups                                              [neuvector headlamp neuvector-admins platform-administrators offline_access uma_authorization monitoring-admins monitoring default-roles-me-yoda headlamp-admins system:authenticated]
+Extra: authentication.kubernetes.io/credential-id   [JTI=161f38cd-bc84-8cbd-81d2-0e92b4d2db20]
+
+kubectl auth can-i delete secret -n monitoring --context oidc-user
+yes
+
+<open https://keycloak.dev.local/realms/me-yoda/protocol/openid-connect/logout and confirm logout to keycloak>
+
+# Now clean the cached tokens (or wait for a few minutes)
+rm -rf ~/.kube/cache/oidc-login
+
+kubectl get nodes --context oidc-user
+
+<login to keycloak as user wilma>
+
+Wordt geopend in een bestaande browsersessie.
+Error from server (Forbidden): nodes is forbidden: User "wilma" cannot list resource "nodes" in API group "" at the cluster scope
+
+kubectl auth whoami --context oidc-user
+ATTRIBUTE                                           VALUE
+Username                                            wilma
+Groups                                              [neuvector headlamp networking-developers offline_access uma_authorization monitoring-viewers monitoring-developers monitoring neuvector-viewers headlamp-viewers default-roles-me-yoda system:authenticated]
+Extra: authentication.kubernetes.io/credential-id   [JTI=9c3d2879-1a0f-386a-144a-794fcbc6b682]
+
+kubectl auth can-i delete secret -n monitoring --context oidc-user
+no
 ```
