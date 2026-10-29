@@ -251,7 +251,7 @@ Add the hostnames to your /etc/hosts as fake DNS service
 Bootstrapping is done using the default (admin) user, however part of the bootstrapping is to setup 4 demo users which have restricted access as configured in Keycloak.
 
 | Username | Password | Groups | Roles |
-| --- | ----------- | --- |
+| --- | ----------- | --- | --- |
 | fred | fred | senior, team-yellow, platform administrators  | platform-administrators (cluster-admins) |
 | wilma | wilma | medior, team-sustaining, infrastructure operator | monitoring-developers, networking-developers |
 | barney | barney | junior, team-sustaining, application operators | *app*-developers |
