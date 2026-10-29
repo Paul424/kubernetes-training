@@ -20,7 +20,8 @@ grafana:
       name: keycloak
       role_attribute_path: Viewer
       scopes: openid grafana
-      token_url: https://keycloak.dev.local/realms/me-yoda/protocol/openid-connect/token
+      # token_url: https://keycloak.dev.local/realms/me-yoda/protocol/openid-connect/token
+      token_url: http://keycloak.keycloak.svc.cluster.local/realms/me-yoda/protocol/openid-connect/token
       allow_assign_grafana_admin: true
       org_attribute_path: teams[?starts_with(@, '/teams')]
       org_mapping: /teams/team-ops:Ops /teams/team-sustaining:Sustaining /teams/team-yellow:Yellow
