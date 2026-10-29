@@ -194,8 +194,6 @@ env         env-security        151m   True    Applied revision: main@sha1:3a5f6
 kubectl get helmrelease -A
 NAMESPACE    NAME                    AGE   READY   STATUS
 monitoring   kube-prometheus-stack   10m   True    Helm install succeeded for release monitoring/kube-prometheus-stack.v1 with chart kube-prometheus-stack@85.0.1
-
-
 ```
 
 ## Control
@@ -209,8 +207,6 @@ flux reconcile kustomization -n env env-observability --with-source
 # Suspend / Resume reconcilers
 flux suspend helmrelease -n monitoring kube-prometheus-stack
 flux resume helmrelease -n monitoring kube-prometheus-stack
-
-
 ```
 
 ## Access
@@ -239,3 +235,20 @@ Add the hostnames to your /etc/hosts as fake DNS service
 2. [Grafana](https://grafana.dev.local/). Credentials: user / password
 3. [Prometheus](https://prometheus.dev.local/). Credentials: user / password
 4. [AlertManager](https://alertmanager.dev.local/).
+
+### Authentication (OIDC)
+
+Bootstrapping is done using the default (admin) user, however part of the bootstrapping is to setup 4 demo users which have restricted access as configured in Keycloak.
+
+| Username | Password | Groups | Roles |
+| --- | ----------- | --- |
+| fred | fred | senior, team-yellow, platform administrators  | platform-administrators (cluster-admins) |
+| wilma | wilma | medior, team-sustaining, infrastructure operator | monitoring-developers, networking-developers |
+| barney | barney | junior, team-sustaining, application operators | *app*-developers |
+| betty | betty | senior, team-ops, network-engineer, kubernetes-engineer | platform-administrators |
+
+To operate as-a-user simply switch to the predefined context for the user.
+
+```
+
+```
