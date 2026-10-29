@@ -17,6 +17,10 @@ kubectl create secret generic private-git -n env \
     --from-literal=password=$REGISTRY_UPSTREAM_PAT \
     --dry-run=client -o yaml | kubectl apply -f -
 
+# Push the keycloak-ca to the cluster
+kubectl create namespace keycloak --dry-run=client -o yaml | kubectl apply -f -
+kubectl -n keycloak create secret tls keycloak-ca-secret --cert=ca.crt --key=ca.key --dry-run=client -o yaml | kubectl apply -f -
+
 # Deploy flux
 kubectl apply -k $BASE/environments/dev/gitops
 
