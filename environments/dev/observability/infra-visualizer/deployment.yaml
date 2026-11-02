@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: infra-visualizer
+  namespace: infra-visualizer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: infra-visualizer
+  template:
+    metadata:
+      labels:
+        app: infra-visualizer
+    spec:
+      serviceAccountName: infra-visualizer
+      containers:
+        - name: infra-visualizer
+          image: ghcr.io/deefthefreeze/infra-visualizer:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000

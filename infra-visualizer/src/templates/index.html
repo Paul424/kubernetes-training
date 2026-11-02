@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Infrastructure Stack Visualizer</title>
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <h1>Infrastructure Stack Visualizer <small>(Fase 1 – Kubernetes laag)</small></h1>
+
+  <div class="legend">
+    <span><span class="dot" style="background:#cfd8dc"></span> VM / Docker</span>
+    <span><span class="dot" style="background:#66bb6a"></span> Node (Ready)</span>
+    <span><span class="dot" style="background:#ffb74d"></span> Control Plane</span>
+    <span><span class="dot" style="background:#64b5f6"></span> Namespace</span>
+    <span><span class="dot" style="background:#a5d6a7"></span> Pod (Running)</span>
+    <span><span class="dot" style="background:#ef9a9a"></span> Pod (Probleem)</span>
+    <span class="hint">💡 Klik op een Namespace of Control Plane om te openen/sluiten</span>
+  </div>
+
+  <div id="network"></div>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: infra-visualizer-selfsigned-issuer
+  namespace: infra-visualizer
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: infra-visualizer-tls-cert
+  namespace: infra-visualizer
+spec:
+  secretName: infra-visualizer-tls
+  duration: 2160h # 90d
+  renewBefore: 720h # 30d
+  dnsNames:
+    - infra-visualizer.dev.local
+  issuerRef:
+    name: infra-visualizer-selfsigned-issuer
+    kind: Issuer

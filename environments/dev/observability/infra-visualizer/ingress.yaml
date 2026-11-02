@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: infra-visualizer
+  namespace: infra-visualizer
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  tls:
+    - hosts:
+        - infra-visualizer.dev.local
+      secretName: infra-visualizer-tls
+  rules:
+    - host: infra-visualizer.dev.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: infra-visualizer
+                port:
+                  number: 80

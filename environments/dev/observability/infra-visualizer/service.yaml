@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: infra-visualizer
+  namespace: infra-visualizer
+spec:
+  selector:
+    app: infra-visualizer
+  ports:
+    - port: 80
+      targetPort: 5000

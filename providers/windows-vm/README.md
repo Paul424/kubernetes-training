@@ -684,3 +684,79 @@ https://keycloak.dev.local
 - Work through the sections in order (GUI setup → choose access path → TLS
   → memory → reboot persistence) for a from-scratch setup.
 
+---
+
+## Bonus: Infrastructure Stack Visualizer (custom add-on project)
+
+As part of this training, an additional self-built project was added: a web-based
+visualizer that shows the live Kubernetes topology (Node to Control Plane to
+Namespaces to Pods) as an interactive, collapsible graph.
+
+Source code and manifests live under `infra-visualizer/` (local dev) and
+`environments/dev/observability/infra-visualizer/` (GitOps manifests, picked up
+automatically by the existing `env-observability` Flux Kustomization).
+
+### Why this is relevant for this provider doc
+
+The visualizer is reachable the exact same way as the other 5 `*.dev.local`
+services (Traefik/Grafana/Prometheus/Alertmanager/Keycloak) described above:
+same IP (minikube VIP), same hosts-file pattern, same browser caveats
+(see "Choosing your access path" and the Edge/TLS gotchas above).
+
+### Setup
+
+1. Manifests are applied automatically via Flux (`env-observability`
+   Kustomization), or manually:
+
+   cd environments/dev/observability
+   kubectl apply -k .
+
+2. Add one extra line to your hosts file (same IP as the other 5 services):
+
+   Option A (Ubuntu, recommended):
+
+   echo "192.168.49.100 infra-visualizer.dev.local" | sudo tee -a /etc/hosts
+
+   Option B (Windows):
+
+   Add-Content -Path "$env:windir\System32\drivers\etc\hosts" -Value "192.168.49.100 infra-visualizer.dev.local"
+
+3. Open in browser:
+
+   https://infra-visualizer.dev.local
+
+Verification:
+
+   kubectl get pods -n infra-visualizer
+   kubectl get ingress -n infra-visualizer
+
+### Image distribution
+
+The Docker image is published publicly on GitHub Container Registry, no local
+build required:
+
+   ghcr.io/deefthefreeze/infra-visualizer:latest
+
+Kubernetes pulls this automatically (`imagePullPolicy: IfNotPresent`). Only if
+you want to modify the source and test your own build locally, see
+`infra-visualizer/README.md` for the `docker build` + `minikube image load`
+workflow.
+
+Known gotcha: Microsoft Edge connection issues
+
+During development, direct access (bypassing Traefik, e.g. testing a raw Flask
+dev server on a VM network adapter IP) intermittently failed in Microsoft Edge
+specifically, while Chrome worked fine on the exact same URL. Root cause was
+never fully confirmed (suspected Edge-specific TLS-upgrade / security policy
+behavior), but once routed through Traefik on the standard `*.dev.local`
+pattern (as described in this document), both Chrome and Edge work correctly,
+same as the other 5 services. Recommendation: use Chrome for any ad-hoc/direct
+testing outside the Traefik path; the final Traefik-routed URLs work fine in
+either browser.
+
+PERSISTENT: No additional reboot-persistence concerns beyond what's already
+covered above (hosts-file entries and the `minikube-tunnel` systemd service are
+shared infrastructure, already persistent).
+
+See `infra-visualizer/README.md` in the repo root for full architecture details,
+RBAC scope, and the roadmap for future phases (VM/Docker-layer visualization).
