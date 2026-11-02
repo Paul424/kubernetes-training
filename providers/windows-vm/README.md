@@ -683,3 +683,4 @@ https://keycloak.dev.local
   reason to panic.
 - Work through the sections in order (GUI setup → choose access path → TLS
   → memory → reboot persistence) for a from-scratch setup.
+
