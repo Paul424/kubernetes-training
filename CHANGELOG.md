@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/Paul424/kubernetes-training/compare/v1.0.0...v1.1.0) (2026-11-03)
+
+
+### Features
+
+* Adding the first exercises ([abad463](https://github.com/Paul424/kubernetes-training/commit/abad463396fbab71189980fd080a99ae9fec85c4))
+
 ## 1.0.0 (2026-10-29)
 
 
