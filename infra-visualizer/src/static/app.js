@@ -223,5 +223,69 @@ function buildGraph() {
   });
 }
 
+function updateTimestamp() {
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  document.getElementById("last-updated").textContent = `Laatste update: ${timeStr}`;
+}
+
+async function refreshNow() {
+  await loadTopology();
+  updateTimestamp();
+}
+
+function setupToolbar() {
+  document.getElementById("zoom-in").addEventListener("click", () => {
+    const scale = network.getScale();
+    network.moveTo({ scale: scale * 1.3 });
+  });
+
+  document.getElementById("zoom-out").addEventListener("click", () => {
+    const scale = network.getScale();
+    network.moveTo({ scale: scale * 0.7 });
+  });
+
+  document.getElementById("fit-screen").addEventListener("click", () => {
+    network.fit({ animation: true });
+  });
+
+  document.getElementById("refresh-btn").addEventListener("click", () => {
+    refreshNow();
+  });
+
+  const searchBox = document.getElementById("search-box");
+  searchBox.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter") return;
+    const query = searchBox.value.trim().toLowerCase();
+    if (!query) return;
+
+    // Auto-expand alle namespaces + control plane zodat de node vindbaar is
+    Object.keys(topologyData.namespaces).forEach((ns) => expandedNamespaces.add(ns));
+    expandedControlPlane = true;
+    buildGraph();
+
+    const allNodes = nodesDataSet.get();
+    const match = allNodes.find((n) =>
+      n.id.toLowerCase().includes(query) || (n.label && n.label.toLowerCase().includes(query))
+    );
+
+    if (match) {
+      network.selectNodes([match.id]);
+      network.focus(match.id, { scale: 1.2, animation: true });
+    } else {
+      alert(`Geen resultaat gevonden voor "${query}"`);
+    }
+  });
+}
+
 loadTopology();
-setInterval(loadTopology, 15000);
+updateTimestamp();
+setInterval(refreshNow, 15000);
+
+// Toolbar pas koppelen zodra de eerste graph is opgebouwd
+const toolbarInterval = setInterval(() => {
+  if (network) {
+    setupToolbar();
+    clearInterval(toolbarInterval);
+  }
+}, 100);

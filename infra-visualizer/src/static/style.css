@@ -64,3 +64,60 @@ h1 small {
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
+.toolbar {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+#search-box {
+  flex: 1;
+  min-width: 220px;
+  padding: 0.5rem 0.9rem;
+  background: #1a2029;
+  border: 1px solid #2a3240;
+  border-radius: 8px;
+  color: #e6e6e6;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  outline: none;
+}
+
+#search-box:focus {
+  border-color: #38bdf8;
+}
+
+#search-box::placeholder {
+  color: #6b7686;
+}
+
+.toolbar-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.toolbar-buttons button {
+  background: #1a2029;
+  border: 1px solid #2a3240;
+  border-radius: 8px;
+  color: #e6e6e6;
+  padding: 0.5rem 0.8rem;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.toolbar-buttons button:hover {
+  background: #242c38;
+  border-color: #38bdf8;
+}
+
+#last-updated {
+  color: #6b7686;
+  font-size: 13px;
+  margin-left: 0.5rem;
+  white-space: nowrap;
+}

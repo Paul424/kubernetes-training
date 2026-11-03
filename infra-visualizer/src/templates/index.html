@@ -20,7 +20,16 @@
     <span><span class="dot" style="background:#ef9a9a"></span> Pod (Probleem)</span>
     <span class="hint">💡 Klik op een Namespace of Control Plane om te openen/sluiten</span>
   </div>
-
+  <div class="toolbar">
+    <input type="text" id="search-box" placeholder="🔍 Zoek pod of namespace..." />
+    <div class="toolbar-buttons">
+      <button id="zoom-in" title="Inzoomen">➕</button>
+      <button id="zoom-out" title="Uitzoomen">➖</button>
+      <button id="fit-screen" title="Alles tonen">⛶</button>
+      <button id="refresh-btn" title="Nu verversen">🔄</button>
+      <span id="last-updated">Laatste update: —</span>
+    </div>
+  </div>
   <div id="network"></div>
   <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
