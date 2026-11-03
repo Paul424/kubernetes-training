@@ -2,8 +2,11 @@ let network;
 let nodesDataSet;
 let edgesDataSet;
 let topologyData;
+let hostInfoData = null;
+let hostInfoError = false;
 let expandedNamespaces = new Set();
 let expandedControlPlane = false;
+let expandedDocker = false;
 
 // Namespace → categorie kleuren (gegroepeerd zoals in environments/dev/<categorie>/)
 const NAMESPACE_COLORS = {
@@ -39,9 +42,29 @@ function getPodColor(pod) {
   }
   return { bg: "#4ade80", border: "#16a34a" }; // groen - helemaal gezond
 }
+
+async function loadHostInfo() {
+  try {
+    const res = await fetch("/api/host-info");
+    if (!res.ok) {
+      hostInfoError = true;
+      hostInfoData = null;
+      return;
+    }
+    hostInfoData = await res.json();
+    hostInfoError = false;
+  } catch (e) {
+    hostInfoError = true;
+    hostInfoData = null;
+  }
+}
+
 async function loadTopology() {
-  const res = await fetch("/api/topology");
-  topologyData = await res.json();
+  const [topologyRes] = await Promise.all([
+    fetch("/api/topology"),
+    loadHostInfo(),
+  ]);
+  topologyData = await topologyRes.json();
   buildGraph();
 }
 
@@ -49,32 +72,79 @@ function buildGraph() {
   const nodes = [];
   const edges = [];
 
-  // Placeholders voor latere fases
+  // --- VM node: live CPU/geheugen stats via host-agent ---
+  let vmLabel = "🖥️ Ubuntu VM\n(VMware)";
+  let vmColor = { background: "#4a5568", border: "#2d3748" };
+
+  if (hostInfoData && hostInfoData.vm) {
+    const { cpu_percent, memory_percent, memory_used_gb, memory_total_gb } = hostInfoData.vm;
+    vmLabel = `🖥️ Ubuntu VM\nCPU: ${cpu_percent.toFixed(1)}%  |  MEM: ${memory_percent.toFixed(1)}%\n(${memory_used_gb.toFixed(1)} / ${memory_total_gb.toFixed(1)} GB)`;
+    if (cpu_percent > 85 || memory_percent > 90) {
+      vmColor = { background: "#fbbf24", border: "#d97706" }; // waarschuwing: hoge belasting
+    }
+  } else if (hostInfoError) {
+    vmLabel = "🖥️ Ubuntu VM\n⚠️ host-agent unreachable";
+    vmColor = { background: "#f87171", border: "#dc2626" };
+  }
+
   nodes.push({
     id: "vm",
-    label: "🖥️ Ubuntu VM\n(VMware)",
+    label: vmLabel,
     level: 0,
-    color: { background: "#4a5568", border: "#2d3748" },
+    color: vmColor,
     shape: "box",
     shapeProperties: { borderRadius: 8 },
-    font: { size: 15, color: "#e6e6e6" },
+    font: { size: 13, color: "#e6e6e6", multi: true, align: "center" },
     borderWidth: 1,
     shadow: { enabled: true, color: "rgba(0,0,0,0.3)", size: 8, x: 0, y: 2 },
   });
+
+  // --- Docker node: klikbaar, toont containers bij uitklappen ---
+  const containerCount =
+    hostInfoData && hostInfoData.docker_containers ? hostInfoData.docker_containers.length : 0;
+
+  let dockerLabel, dockerColor;
+  if (hostInfoError) {
+    dockerLabel = "🐳 Docker\n⚠️ unreachable";
+    dockerColor = { background: "#f87171", border: "#dc2626" };
+  } else {
+    dockerLabel = `🐳 Docker\n(${containerCount} containers)\n${expandedDocker ? "▼" : "▶ klik om te openen"}`;
+    dockerColor = { background: "#4a5568", border: "#2d3748" };
+  }
+
   nodes.push({
     id: "docker",
-    label: "🐳 Docker",
+    label: dockerLabel,
     level: 1,
-    color: { background: "#4a5568", border: "#2d3748" },
+    color: dockerColor,
     shape: "box",
     shapeProperties: { borderRadius: 8 },
-    font: { size: 15, color: "#e6e6e6" },
+    font: { size: 13, color: "#e6e6e6", multi: true, align: "center" },
     borderWidth: 1,
     shadow: { enabled: true, color: "rgba(0,0,0,0.3)", size: 8, x: 0, y: 2 },
   });
   edges.push({ from: "vm", to: "docker" });
 
-  // Nodes
+  if (expandedDocker && hostInfoData && hostInfoData.docker_containers) {
+    hostInfoData.docker_containers.forEach((c) => {
+      const id = `container-${c.name}`;
+      nodes.push({
+        id,
+        label: `📦 ${c.name}\n${c.status}\n${c.image}`,
+        level: 2,
+        color: { background: "#94a3b8", border: "#64748b" },
+        shape: "box",
+        shapeProperties: { borderRadius: 6 },
+        font: { size: 10, color: "#0f1419" },
+        widthConstraint: { minimum: 170, maximum: 200 },
+        borderWidth: 1,
+        shadow: { enabled: true, color: "rgba(0,0,0,0.2)", size: 4, x: 0, y: 1 },
+      });
+      edges.push({ from: "docker", to: id });
+    });
+  }
+
+  // Nodes (k8s) — level opgeschoven van 2 naar 3
   topologyData.nodes.forEach((node) => {
     const nodeId = `node-${node.name}`;
     const bg = node.ready ? "#2dd4bf" : "#f87171";
@@ -82,7 +152,7 @@ function buildGraph() {
     nodes.push({
       id: nodeId,
       label: `🖥️ ${node.name}\n${node.ready ? "✅ Ready" : "❌ NotReady"}\nk8s ${node.kubelet_version}`,
-      level: 2,
+      level: 3,
       color: { background: bg, border: border },
       shape: "box",
       shapeProperties: { borderRadius: 8 },
@@ -93,12 +163,12 @@ function buildGraph() {
     edges.push({ from: "docker", to: nodeId });
   });
 
-  // Control plane (inklapbaar)
+  // Control plane (inklapbaar) — level opgeschoven van 3 naar 4
   const cpCount = topologyData.control_plane_pods.length;
   nodes.push({
     id: "control-plane",
     label: `⚙️ Control Plane\n(${cpCount} pods)\n${expandedControlPlane ? "▼ klik om in te klappen" : "▶ klik om uit te klappen"}`,
-    level: 3,
+    level: 4,
     color: { background: "#fbbf24", border: "#d97706" },
     shape: "box",
     shapeProperties: { borderRadius: 8 },
@@ -117,7 +187,7 @@ function buildGraph() {
       nodes.push({
         id,
         label: `${icon} ${pod.name}\n${pod.status}${restartSuffix}`,
-        level: 4,
+        level: 5,
         color: { background: bg, border: border },
         shape: "box",
         shapeProperties: { borderRadius: 6 },
@@ -130,7 +200,7 @@ function buildGraph() {
     });
   }
 
-  // Namespaces (inklapbaar) — eigen kleur per categorie
+  // Namespaces (inklapbaar) — level opgeschoven van 3 naar 4
   Object.entries(topologyData.namespaces).forEach(([ns, pods]) => {
     const nsId = `ns-${ns}`;
     const isExpanded = expandedNamespaces.has(ns);
@@ -138,7 +208,7 @@ function buildGraph() {
     nodes.push({
       id: nsId,
       label: `📦 ${ns}\n(${pods.length} pods)\n${isExpanded ? "▼" : "▶ klik om te openen"}`,
-      level: 3,
+      level: 4,
       color: { background: nsColor.bg, border: nsColor.border },
       shape: "box",
       shapeProperties: { borderRadius: 8 },
@@ -157,7 +227,7 @@ function buildGraph() {
         nodes.push({
           id: podId,
           label: `${icon} ${pod.name}\n${pod.status}${restartSuffix}`,
-          level: 4,
+          level: 5,
           color: { background: bg, border: border },
           shape: "box",
           shapeProperties: { borderRadius: 6 },
@@ -219,6 +289,9 @@ function buildGraph() {
     } else if (clickedId === "control-plane") {
       expandedControlPlane = !expandedControlPlane;
       buildGraph();
+    } else if (clickedId === "docker") {
+      expandedDocker = !expandedDocker;
+      buildGraph();
     }
   });
 }
@@ -259,9 +332,10 @@ function setupToolbar() {
     const query = searchBox.value.trim().toLowerCase();
     if (!query) return;
 
-    // Auto-expand alle namespaces + control plane zodat de node vindbaar is
+    // Auto-expand alle namespaces + control plane + docker zodat de node vindbaar is
     Object.keys(topologyData.namespaces).forEach((ns) => expandedNamespaces.add(ns));
     expandedControlPlane = true;
+    expandedDocker = true;
     buildGraph();
 
     const allNodes = nodesDataSet.get();
