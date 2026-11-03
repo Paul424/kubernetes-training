@@ -1,4 +1,5 @@
 import os
+import requests
 from flask import Flask, jsonify, render_template
 from kubernetes import client, config
 
@@ -8,6 +9,8 @@ CONTROL_PLANE_KEYWORDS = [
     "kube-apiserver", "etcd", "kube-scheduler",
     "kube-controller-manager", "kube-proxy", "coredns",
 ]
+
+HOST_AGENT_URL = os.getenv("HOST_AGENT_URL", "http://host.minikube.internal:9000/host-info")
 
 
 def load_k8s_config():
@@ -74,6 +77,19 @@ def get_topology():
         "control_plane_pods": control_plane_pods,
         "namespaces": pods_by_namespace,
     })
+
+
+@app.route("/api/host-info")
+def get_host_info():
+    try:
+        response = requests.get(HOST_AGENT_URL, timeout=3)
+        response.raise_for_status()
+        return jsonify(response.json())
+    except requests.exceptions.RequestException as e:
+        return jsonify({
+            "error": "host-agent unreachable",
+            "details": str(e)
+        }), 503
 
 
 if __name__ == "__main__":
