@@ -1,0 +1,14 @@
+[Unit]
+Description=Host Agent - VM and Docker metrics for Infrastructure Visualizer
+After=docker.service network.target
+
+[Service]
+Type=simple
+User=dave
+WorkingDirectory=/home/dave/kubernetes-training/infra-visualizer/host-agent
+ExecStart=/home/dave/kubernetes-training/infra-visualizer/host-agent/venv/bin/python3 app.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
