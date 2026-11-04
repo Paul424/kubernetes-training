@@ -760,3 +760,122 @@ shared infrastructure, already persistent).
 
 See `infra-visualizer/README.md` in the repo root for full architecture details,
 RBAC scope, and the roadmap for future phases (VM/Docker-layer visualization).
+
+## Troubleshooting: MetalLB / minikube tunnel conflict
+
+On this VMware Workstation Pro + Docker-driver setup, MetalLB and
+minikube tunnel must not run simultaneously. Both independently attempt
+to manage status.loadBalancer.ingress[].ip on LoadBalancer-type Services
+(e.g. the Traefik Service), and neither is aware of the other. Running both
+produces a continuous allocate/withdraw loop, typically every 5-10 seconds.
+
+### Symptoms
+
+- kubectl get svc -n traefik -w shows EXTERNAL-IP flapping between the
+  MetalLB VIP (e.g. 192.168.49.100) and the Service's own ClusterIP
+- kubectl logs -n metallb-system -l component=controller repeatedly shows:
+
+      "current IP not allowed by config, clearing"
+      "ipAllocated ip=192.168.49.100"
+
+- kubectl logs -n metallb-system -l component=speaker repeatedly shows:
+
+      "error":"assigned IP not allowed by config"
+      "event":"serviceWithdrawn"
+
+- Any *.dev.local hostname becomes intermittently unreachable:
+
+      dial tcp 192.168.49.100:443: connect: no route to host
+
+  This is particularly disruptive for anything doing OIDC discovery (e.g.
+  kubectl --context=oidc-user ...), since a single failed request during
+  the token exchange breaks the whole flow.
+
+### Root causes (both must be fixed — they compound each other)
+
+1. Corrupted MetalLB ConfigMap (minikube addon template bug)
+
+The "minikube addons enable metallb" addon occasionally (re)generates its
+ConfigMap with an invalid addresses entry — a bare "-" instead of a valid
+IP range string:
+
+    # Corrupted:
+    address-pools:
+    - name: default
+      protocol: layer2
+      addresses:
+      - -              # invalid, causes YAML parse failure
+
+    # Correct:
+    address-pools:
+    - name: default
+      protocol: layer2
+      addresses:
+      - 192.168.49.100-192.168.49.100
+
+This causes the MetalLB controller to log "config marked stale" and refuse
+to allocate any IP, which — combined with cause #2 below — produces the
+observed flapping.
+
+Check for this:
+
+    kubectl get configmap -n metallb-system config -o jsonpath='{.data.config}'
+
+If corrupted, reapply the known-good version:
+
+    kubectl apply -f environments/dev/gitops/metallb.yaml
+    kubectl delete pod -n metallb-system -l component=controller
+
+2. minikube tunnel's "loadbalancer emulator" competing with MetalLB
+
+Independent of the ConfigMap bug, minikube tunnel has its own built-in
+logic for assigning LoadBalancer IPs on Docker-driver setups, which actively
+patches the Service status. When MetalLB is also running, both systems
+reconcile independently and overwrite each other's changes.
+
+### Fix applied on this VM
+
+minikube tunnel is permanently disabled — MetalLB alone (with a valid
+ConfigMap, layer2/ARP mode) is sufficient and conflict-free for assigning the
+Traefik Service's VIP on this network topology:
+
+    sudo systemctl stop minikube-tunnel
+    sudo systemctl disable minikube-tunnel
+
+Verify it won't restart on reboot:
+
+    systemctl is-enabled minikube-tunnel   # should print: disabled
+
+### If you re-enable the MetalLB addon in the future
+
+Running "minikube addons disable metallb" followed by "enable metallb" will
+regenerate the ConfigMap from the addon's internal template — which may
+reintroduce the corrupted-addresses bug. Always verify afterward:
+
+    kubectl get configmap -n metallb-system config -o jsonpath='{.data.config}'
+    # If it shows "- -" instead of a valid range:
+    kubectl apply -f environments/dev/gitops/metallb.yaml
+    kubectl delete pod -n metallb-system -l component=controller
+
+Do not re-enable minikube-tunnel.service alongside MetalLB — pick one,
+not both. On this VM, MetalLB is the chosen mechanism.
+
+### Diagnostic commands reference
+
+    # Is tunnel running?
+    ps aux | grep "minikube tunnel" | grep -v grep
+    systemctl status minikube-tunnel
+
+    # Is MetalLB's controller actually processing the config?
+    kubectl logs -n metallb-system -l component=controller --tail=50
+
+    # Is the speaker successfully announcing the VIP via ARP?
+    kubectl logs -n metallb-system -l component=speaker --tail=20
+
+    # Does the host see a correct ARP entry for the VIP?
+    ip neigh show | grep 192.168.49.100
+    # If stale/missing:
+    sudo ip neigh flush 192.168.49.100
+
+    # Is the Service stable over time?
+    kubectl get svc -n traefik -w
