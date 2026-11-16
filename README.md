@@ -48,7 +48,7 @@ Following tools are required, install all of these. When possible just pick a pr
     curl -L https://github.com/int128/kubelogin/releases/download/v1.36.4/kubelogin_linux_amd64.zip -o kubelogin.zip && \
       unzip -p kubelogin.zip kubelogin > kubectl-oidc_login && \
       sudo install kubectl-oidc_login /usr/local/bin/ && \
-      rm kubelogin kubelogin.zip
+      rm kubectl-oidc_login kubelogin.zip
     ```
 
 4. [minikube](https://minikube.sigs.k8s.io/docs/start/?arch=%2Flinux%2Fx86-64%2Fstable%2Fbinary+download)
@@ -186,37 +186,42 @@ bash ./scripts/bootstrap.sh
 
 ## Monitor
 
-After a few minutes services should be up and running. Check the status of following relevant resources:
+After a few minutes services should be up and running. Check the status of the containers:
 
 ```
-# 1. The GitRepository from which desired state is read
-kubectl get gitrepositories -A
-NAMESPACE   NAME                  URL                                                  AGE    READY   STATUS
-env         kubernetes-training   https://github.com/Paul424/kubernetes-training.git   150m   True    stored artifact for revision 'main@sha1:3a5f6d330c5e52d5a073dcc2a67bc7ef428bcf04'
-
-# 2. The state of (top level) environment Kustomizations
-kubectl get kustomization -A
-NAMESPACE   NAME                AGE    READY   STATUS
-env         env-observability   151m   True    Applied revision: main@sha1:3a5f6d330c5e52d5a073dcc2a67bc7ef428bcf04
-env         env-security        151m   True    Applied revision: main@sha1:3a5f6d330c5e52d5a073dcc2a67bc7ef428bcf04
-
-# 3. State of lower level HelmReleases
-kubectl get helmrelease -A
-NAMESPACE    NAME                    AGE   READY   STATUS
-monitoring   kube-prometheus-stack   10m   True    Helm install succeeded for release monitoring/kube-prometheus-stack.v1 with chart kube-prometheus-stack@85.0.1
-```
-
-## Control
-
-From the commandline you are control gitops operations:
-
-```
-# Fetch latest updates from the (git) upstream + trigger a reconcile for the observability environment.
-flux reconcile kustomization -n env env-observability --with-source
-
-# Suspend / Resume reconcilers
-flux suspend helmrelease -n monitoring kube-prometheus-stack
-flux resume helmrelease -n monitoring kube-prometheus-stack
+kubectl get pods -A
+NAMESPACE          NAME                                                       READY   STATUS    RESTARTS   AGE
+cert-manager       cert-manager-7c94d65774-vjgk9                              1/1     Running   0          8m45s
+cert-manager       cert-manager-cainjector-79dfb8cb5f-gw625                   1/1     Running   0          8m45s
+cert-manager       cert-manager-webhook-6589c57d88-wjngb                      1/1     Running   0          8m45s
+flux               helm-controller-bc5d86b96-tt82d                            1/1     Running   0          13m
+flux               kustomize-controller-65797954b8-bgdrf                      1/1     Running   0          13m
+flux               notification-controller-57684b6cf6-7ljr6                   1/1     Running   0          13m
+flux               source-controller-6757d45f48-mstjd                         1/1     Running   0          13m
+infra-visualizer   infra-visualizer-6d4975dcfb-xrp7p                          1/1     Running   0          7m47s
+keycloak           keycloak-0                                                 1/1     Running   0          8m43s
+keycloak           keycloak-postgresql-0                                      1/1     Running   0          8m43s
+kube-system        calico-kube-controllers-db57f7644-k2lbs                    1/1     Running   0          26m
+kube-system        calico-node-rf7cj                                          1/1     Running   0          26m
+kube-system        coredns-559f6c778d-2cjpc                                   1/1     Running   0          26m
+kube-system        csi-hostpath-attacher-0                                    1/1     Running   0          26m
+kube-system        csi-hostpath-resizer-0                                     1/1     Running   0          26m
+kube-system        csi-hostpathplugin-tqq6f                                   6/6     Running   0          26m
+kube-system        etcd-minikube                                              1/1     Running   0          26m
+kube-system        kube-apiserver-minikube                                    1/1     Running   0          26m
+kube-system        kube-controller-manager-minikube                           1/1     Running   0          26m
+kube-system        kube-proxy-8sx5b                                           1/1     Running   0          26m
+kube-system        kube-scheduler-minikube                                    1/1     Running   0          26m
+kube-system        storage-provisioner                                        1/1     Running   0          26m
+metallb-system     controller-74fb865f54-cnvxl                                1/1     Running   0          26m
+metallb-system     speaker-6mjfp                                              1/1     Running   0          26m
+monitoring         alertmanager-kube-prometheus-stack-alertmanager-0          2/2     Running   0          7m18s
+monitoring         kube-prometheus-stack-grafana-84c6cdbc45-9749t             3/3     Running   0          7m25s
+monitoring         kube-prometheus-stack-kube-state-metrics-c78644f96-tgj8x   1/1     Running   0          7m25s
+monitoring         kube-prometheus-stack-operator-9dc896c6f-j9tkh             1/1     Running   0          7m25s
+monitoring         kube-prometheus-stack-prometheus-node-exporter-jt9h6       1/1     Running   0          7m25s
+monitoring         prometheus-kube-prometheus-stack-prometheus-0              2/2     Running   0          7m18s
+traefik            traefik-7bf45b8b6d-w6nmn                                   1/1     Running   0          8m13s
 ```
 
 ## Access
