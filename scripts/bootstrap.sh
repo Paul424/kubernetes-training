@@ -32,3 +32,6 @@ kubectl wait --for=condition=available --timeout "300s" -n flux "deployment/sour
 
 # The top level reconciler
 kubectl apply -k $BASE/environments/dev/env
+
+# Create oidc user
+bash ./scripts/create-oidc-kubeconfigs.sh
