@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.1.0](https://github.com/Paul424/kubernetes-training/compare/v1.0.0...v1.1.0) (2026-11-16)
+
+
+### Features
+
+* Adding the first exercises ([abad463](https://github.com/Paul424/kubernetes-training/commit/abad463396fbab71189980fd080a99ae9fec85c4))
+* docs / exercises updated ([f7bf3af](https://github.com/Paul424/kubernetes-training/commit/f7bf3af57c67edaeca3ef2e9b987304940a82627))
+* traefik verbosity ([23d7af3](https://github.com/Paul424/kubernetes-training/commit/23d7af3f5a312dfc4b7f8d05970eb85301da6d72))
+
+
+### Bug Fixes
+
+* drift detection ([cf26d7c](https://github.com/Paul424/kubernetes-training/commit/cf26d7caca264e3815ac5fe90f4d0e0829ad885e))
+* logs log ([b91bfd2](https://github.com/Paul424/kubernetes-training/commit/b91bfd2ce2b8bdf1f7c562133ff6239fc17601c3))
+
 ## 1.0.0 (2026-10-29)
 
 
