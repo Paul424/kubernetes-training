@@ -8,15 +8,14 @@ gateway:
       namespacePolicy:
         from: All
 
-logs:
-  general:
-    level: DEBUG
-    format: json
-  access:
-    enabled: true
-    format: json
-    fields:
-      general:
-        defaultmode: keep
-      headers:
-        defaultmode: keep
+log:
+  level: DEBUG        # Opties: TRACE, DEBUG, INFO, WARN, ERROR, FATAL, PANIC
+  format: json        # Opties: common of json
+
+accessLog:
+  enabled: true
+  format: json        # Aanbevolen: toont zowel DownstreamStatus als OriginStatus
+  fields:
+    defaultMode: keep # Opties: keep, drop, redact
+    headers:
+      defaultMode: keep # Gebruik 'redact' als je gevoelige headers (zoals Authorization) wilt maskeren
