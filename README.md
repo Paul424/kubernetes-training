@@ -248,6 +248,7 @@ Add the hostnames to your /etc/hosts as fake DNS service
 2. [Grafana](https://grafana.dev.local/). Credentials: user / password
 3. [Prometheus](https://prometheus.dev.local/). Credentials: user / password
 4. [AlertManager](https://alertmanager.dev.local/).
+5. [Keycloak](https://keycloak.dev.local/). Credentials: admin / admin
 
 ### Authentication (OIDC)
 
