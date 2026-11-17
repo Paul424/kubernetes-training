@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0](https://github.com/Paul424/kubernetes-training/compare/v1.1.0...v1.2.0) (2026-11-17)
+
+
+### Features
+
+* Adding wsl support ([f9dd7aa](https://github.com/Paul424/kubernetes-training/commit/f9dd7aaf38913b38850c3f8d410d56fdaf39c39e))
+
+
+### Bug Fixes
+
+* Added keycloak as endpoint in docs ([bc6d30c](https://github.com/Paul424/kubernetes-training/commit/bc6d30cdabbfcea94b9767d4219f80b1b228e4c5))
+
 ## [1.1.0](https://github.com/Paul424/kubernetes-training/compare/v1.0.0...v1.1.0) (2026-11-16)
 
 
