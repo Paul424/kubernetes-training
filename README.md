@@ -14,18 +14,16 @@ This repository holds a baseline Kubernetes environment which we can use to get 
 6. CNI (networking), CSI (storage) and ingress
 7. Crt's, auth rbac and keycloak
 8. Observability /w Prometheus and Grafana
-9. 
-
-### Topics excluded
-
-1. Tunneling; yes we can work with headless VM's and expose apps using a tunnel (and use foxy proxy to access apps over a SOCKS5 tunnel), but it only makes it more complicated, not just the tunnel setup but also doing DNS workarounds on an additional level.
-2. Wsl; even though we can spin a similar setup on our (Windows based) office equipment using wsl it is left out intentionally because it adds complexity, for instance to fine tune wsl setup to enable container platform and wsl is headless meaning you need to tunnel your apps to the browser running on Windows.
 
 ## Development Environment Provider
 
-We use a VM from [CloudNL / VMware](./providers/vmware/README.md) as the development environment, please see the README for a guideline how to configure and operate.
+We use a VM from [CloudNL / VMware](./providers/vmware/README.md) preferrably as the development environment, please see the README for a guideline how to configure and operate. The benifit of such VM is that we don't need to worrie about ssh / tunnel setup or additional abstractions (vm or wsl running on Windows host).
 
 Then continue on your VM with this guide.
+
+### Alternatives / Fallbacks
+
+The providers directory holds alternative infra solutions such as [wsl](./providers/wsl/README.md) and [windows-vm](./providers/windows-vm/README.md), feel free to use these as a fallback.
 
 ## Prerequisites
 
